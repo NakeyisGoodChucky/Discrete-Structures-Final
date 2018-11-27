@@ -1,41 +1,42 @@
 #include <iostream>
-#include <string>
+#include <string.h> 
 using namespace std;
-
-// Github sucks.
 
 string StringText;
 string codeword;
-string AdjustedKeyword;
-
-string repeat(string s, int n)
-  {
-    string s1 = s;
-
-    for (int i=1; i < n; i++)
-      s += s1;
-
-      return s;
-  }
-
+int j = 0;
+int i = 0;
 
 int main ()
 {
-
-  cout << "Please type in text string NOW!" << endl;
+  
+  
+  //Input for Message and Cipher
+  cout << "Please type in text string to encrypt" << endl;
 
   getline(cin, StringText);
 
-  cout << "Please enter the CodeWord" << endl;
+  cout << "Please enter the cipher word" << endl;
 
   getline(cin, codeword);
+  
+  
+  //Adjust Cipher to repeat to Message Length
+  int StringTextLength = StringText.length();
+  char AdjustedKeyword [StringTextLength];
+  for (i = 0; i < StringText.length(); ++i , ++j)
+   {
+     if (j == codeword.length())
+      j = 0;
+    
+      AdjustedKeyword[i] = codeword[j];
+   }
 
-  string s = codeword;
-  int n = (StringText.length()/codeword.length())+1;
-
-  string AdjustedKeyword = repeat (s, n);
-
-  cout << endl << "Encrypted Text: ";
+   AdjustedKeyword[i] = '\0';
+  
+  
+  //Turn Message and Cipher into capitals to keep consistant 0-25 and then ecrypt
+  char EncryptedMessage[StringTextLength];
   for (int i = 0; i < StringText.length(); i++)
   {
     if(StringText[i]>=97 && StringText[i]<=122)
@@ -49,12 +50,37 @@ int main ()
 
    int offset =  (StringText[i]+AdjustedKeyword[i]) %26;
 
-   char TEXT = offset += 'A';
-
-   cout << TEXT;
+   EncryptedMessage[i] = offset + 'A';
   }
 
-  cout << endl << endl << "Plain Text: " << StringText << endl << endl << "Code Word: " << codeword << endl;
+  //Decrypt Message that has already gone through above process
+  char RevealedMessage[StringTextLength];
+  for (i = 0; i < StringText.length(); i++)
+  {
+    RevealedMessage[i] = (((EncryptedMessage[i] - AdjustedKeyword[i] +26) %26) + 'A' );
+
+
+    if (StringText[i] >=32 && StringText[i] <= 64)
+    {
+      RevealedMessage[i] = StringText[i];
+    }
+    if (StringText[i] >= 91 && StringText[i] <= 96)
+    {
+      RevealedMessage[i] = StringText[i];
+    }
+    if (StringText[i]>=121 && StringText[i] <=126)
+    {
+      RevealedMessage[i] = StringText[i];
+    }
+  }
+
+  RevealedMessage[i] = '\0';
+
+  //Outputs
+  cout << endl << "Encrypted Text Reads:  " << EncryptedMessage << 
+  endl << "Plain Text: " << StringText << endl << "Code Word was \"" << codeword << "\" adjusted to: " << 
+
+AdjustedKeyword << endl << "Text decrypted back: " << RevealedMessage << endl;
 
   return 0;
 }
